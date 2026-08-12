@@ -1,0 +1,6 @@
+# Obsidian
+.obsidian/
+.trash/
+
+# 个人笔记区（pull 永不触碰）
+99_Personal/

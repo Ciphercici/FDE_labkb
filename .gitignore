@@ -1,0 +1,19 @@
+# ---- 运行时产物 ----
+*.log
+__pycache__/
+*.pyc
+
+# ---- 凭据与环境配置（绝不提交） ----
+.env
+.env.*
+*.pem
+*.key
+.ssh/
+
+# ---- 云函数打包产物（用脚本重新生成） ----
+cloud_deploy/
+
+# ---- Obsidian 知识库运行时 ----
+.obsidian/
+.trash/
+99_Personal/
