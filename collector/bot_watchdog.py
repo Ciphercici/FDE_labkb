@@ -26,7 +26,7 @@ KB = Path("/home/user/lab-kb")
 STATUS = KB / "_queue" / "bot_status.md"
 LOG = Path("/tmp/bot_watchdog.log")
 
-GIT_REMOTE = "https://gitee.com/<org>/<repo>.git"  # 仅供注释参考，实际用仓库已配 remote
+GIT_REMOTE = "https://<git平台>/<org>/<repo>.git"  # 仅供注释参考，实际用仓库已配 remote
 
 
 def log(msg):

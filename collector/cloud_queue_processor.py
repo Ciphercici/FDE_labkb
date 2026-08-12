@@ -12,8 +12,8 @@
 限制: 函数超时建议 900s；每轮抓取上限 KB_MAX_PER_RUN（默认 3）防超时
 
 环境变量（云函数控制台配置，凭据不写代码）:
-    KB_GIT_URL      仓库地址。云端用 ssh: git@gitee.com:<org>/labknowledge.git
-                    本地测试用 https: https://gitee.com/<org>/<repo>.git
+    KB_GIT_URL      仓库地址。云端用 ssh: git@<git平台>:<org>/labknowledge.git
+                    本地测试用 https: https://<git平台>/<org>/<repo>.git
     KB_SSH_KEY      部署公钥的私钥内容（仅 ssh 模式；含换行需原样粘贴）
     KB_GIT_USER     提交用户名，默认 bot
     KB_GIT_EMAIL    提交邮箱，默认 bot@lab-kb.local

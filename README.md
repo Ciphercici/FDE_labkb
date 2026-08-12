@@ -117,7 +117,7 @@ cat ~/.ssh/id_ed25519.pub
 ```
 
 - 公钥粘贴到 Git 仓库 → 管理 → **部署公钥**
-- 验证：`ssh -T git@gitee.com`
+- 验证：`ssh -T git@github.com`（GitHub 平台；其他平台用对应域名）
 
 ### 第三步：云函数处理端（自动抓取）
 
