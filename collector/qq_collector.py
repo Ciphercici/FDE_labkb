@@ -6,7 +6,7 @@ QQ 群公众号文章自动收藏机器人（OneBot 11 协议，配合 NapCat �
 流程: 群消息 → 提取 mp.weixin.qq.com 链接 → 调 wechat_fetcher 抓取入库 → 群内回复结果 → git 自动提交
 
 部署:
-    1. 下载运行 NapCat（QQNT 协议库），登录机器人小号
+    1. 下载运行 NapCat（QQNT 协议库），登录专用机器人账号
     2. NapCat WebUI 开启 WebSocket 服务端（默认 ws://127.0.0.1:3001）
     3. pip install websockets
     4. 修改下方 CONFIG（ws_url / kb_root / fetcher 路径 / 群白名单）
@@ -30,11 +30,11 @@ CONFIG = {
     "ws_url": "ws://127.0.0.1:3001",       # NapCat 正向 WebSocket 地址
     "group_whitelist": [],  # 填自己的群号，如 [123456789]        # 只处理这些群，[] = 所有群（建议填自己的群号）
     "kb_root": r"<kb_root>",  # 知识库根目录
-    "fetcher": "_tools/wechat_fetcher/wechat_fetcher.py",           # 相对 kb_root（正斜杠，跨平台）
+    "fetcher": "collector/wechat_fetcher.py",                        # 相对 kb_root（正斜杠，跨平台）
     "git_auto_commit": True,                # 抓取成功后自动 git add + commit
     "git_auto_push": False,                 # 是否自动 push（凭据自行配置，不写明文）
     "cooldown_sec": 300,                    # 同一链接去重冷却（秒）
-    "fetch_mode": "local",                  # local=收到链接直接抓取(本机)；queue=入队待本机处理(服务器海外IP抓不了微信)
+    "fetch_mode": "local",                  # local=收到链接直接抓取(本机)；queue=入队待处理端统一抓取(服务器网络受限时)
 }
 # ==========================================
 
@@ -188,7 +188,7 @@ async def handle_event(ws, data):
         return
 
     if CONFIG["fetch_mode"] == "queue":
-        # 服务器模式：海外 IP 抓不了微信 → 入队，处理端（本机/云函数）统一抓取
+        # 服务器模式（网络受限不抓取）：入队，处理端（本机/云函数）统一抓取
         # 先同步远端队列：服务器只 push 不 pull，若本机已清空队列而服务器本地是
         # 旧文件，append 会把已处理的链接重复推上去 → 入队前先 pull 对齐
         kb = Path(CONFIG["kb_root"])

@@ -3,16 +3,16 @@
 """
 QQ 机器人掉线看门狗（服务器运行，crontab 每 5 分钟）
 
-背景: 海外机房 IP 下 QQ 会话会被腾讯主动失效（"网络连接异常"1006514 /
+背景: 机房网络下 IM 会话可能被服务端判定异常而失效（"网络连接异常"1006514 /
       "身份已失效，为保证账号安全"），NapCat 不会自动重连。
      本脚本每 5 分钟检查 NapCat 日志错误，发现掉线后自动重启容器
-     （尝试 -e ACCOUNT 快速登录恢复）；快速登录也失败（token 被腾讯
-     失效）则写入 _queue/bot_status.md 并 push 到 Gitee —— 用户在
+     （尝试 -e ACCOUNT 快速登录恢复）；快速登录也失败（登录态被服务端
+     作废）则写入 _queue/bot_status.md 并 push 到 Gitee —— 用户在
      Obsidian 里 pull 即看到"需要人工重新登录"提醒。
 
 部署（服务器）:
     crontab -e  添加:
-    */5 * * * * python3 /home/user/lab-kb/_tools/qq_collector/bot_watchdog.py
+    */5 * * * * python3 /home/user/lab-kb/collector/bot_watchdog.py
 
 检查状态:
     cat _queue/bot_status.md   （存在=需人工重登；不存在=正常）
@@ -88,17 +88,17 @@ def main():
     run("sudo docker restart napcat", timeout=90)
     time.sleep(30)
 
-    # 3. 重启后 30 秒内日志是否仍报"身份已失效"（token 被腾讯作废 → 必须人工）
+    # 3. 重启后 30 秒内日志是否仍报"身份已失效"（登录态被服务端作废 → 必须人工）
     bad = run("sudo docker logs napcat --since 40s 2>&1 | grep -c '身份已失效'")
     if bad and bad != "0":
         msg = (
             "⚠️ **机器人掉线，需要人工重新登录**\n\n"
             f"时间：{time.strftime('%Y-%m-%d %H:%M')}\n"
-            "原因：QQ 会话被腾讯主动失效（海外机房 IP 风控），自动恢复失败\n\n"
+            "原因：QQ 会话被服务端判定异常失效，自动恢复失败\n\n"
             "操作步骤：\n"
             "1. 本机开隧道：`ssh -L 6099:127.0.0.1:6099 user@<server_ip>`\n"
             "2. 浏览器打开 `http://127.0.0.1:6099/webui?token=<webui_token>`\n"
-            "3. 小号 <bot_qq> 密码 + 短信验证码登录\n\n"
+            "3. 专用账号 <bot_qq> 密码 + 短信验证码登录\n\n"
             "登录后本文件会被自动清除（watchdog 检测到恢复）。"
         )
         push_status(msg)

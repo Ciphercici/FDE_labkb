@@ -108,7 +108,7 @@ def run():
         return {"ok": True, "pulled": 0, "failed": 0, "remaining": 0}
     log(f"队列 {len(urls)} 条，本轮上限 {max_per_run} 条")
 
-    # 3. 逐个抓取（每篇检查剩余时间，防超时；失败重试 1 次，机房 IP 风控可能是间歇的）
+    # 3. 逐个抓取（每篇检查剩余时间，防超时；失败重试 1 次，访问限制可能是间歇的）
     done, failed = [], []
     for u in urls[:max_per_run]:
         if time.monotonic() - start > timeout_sec:

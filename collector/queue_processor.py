@@ -3,8 +3,8 @@
 """
 本机队列处理器（混合架构处理端）
 
-背景: 服务器（海外 IP）收 QQ 链接但抓不了微信（海外 IP 被微信风控），
-      本机（国内 IP）能抓。本机开机时运行本脚本，把服务器排队的链接逐个抓取入库。
+背景: 服务器（接收端）只收链接入队、不抓取（该网络环境下目标站点访问受限），
+      本机网络环境可正常抓取。本机开机时运行本脚本，把服务器排队的链接逐个抓取入库。
 
 流程: git pull → 读 _queue/links.txt → 逐个抓取（wechat_fetcher）→ 更新队列 → git push
 
@@ -26,7 +26,7 @@ from pathlib import Path
 
 # ============ 配置 ============
 KB_ROOT = Path(r"<kb_root>")
-FETCHER = KB_ROOT / "_tools" / "wechat_fetcher" / "wechat_fetcher.py"
+FETCHER = KB_ROOT / "collector" / "wechat_fetcher.py"
 QUEUE_FILE = KB_ROOT / "_queue" / "links.txt"
 OUT_DIR = KB_ROOT / "05_知识" / "文章收藏"
 ATT_DIR = KB_ROOT / "_attachments"
@@ -34,7 +34,7 @@ GAP_SEC = 15          # 每篇抓取间隔（防微信限流）
 RETRY = 1             # 失败重试次数
 # ===============================
 
-LOG_FILE = KB_ROOT / "_tools" / "qq_collector" / "queue_processor.log"
+LOG_FILE = KB_ROOT / "collector" / "queue_processor.log"
 
 
 def log(msg):

@@ -1,0 +1,54 @@
+name: Release
+
+# 触发方式：
+#   1. 推送 tag（git tag v1.0.0 && git push origin v1.0.0）——自动构建发布
+#   2. GitHub 页面手动运行（Actions → Release → Run workflow）——用当前最新提交构建
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Build cloud function package
+        working-directory: collector
+        run: |
+          python build_cloud_package.py
+          echo "cloud_zip=$(pwd)/cloud_deploy/qq-collector-cloud.zip" >> "$GITHUB_ENV"
+
+      - name: Assemble full deployment package
+        run: |
+          TAG="${GITHUB_REF_NAME:-dev}"
+          mkdir -p dist/labkb-$TAG
+          cp -r collector docs kb-template README.md LICENSE dist/labkb-$TAG/
+          rm -rf dist/labkb-$TAG/collector/cloud_deploy   # 打包产物单出
+          cd dist && zip -qr ../labkb-full-$TAG.zip labkb-$TAG
+          echo "full_zip=$(pwd)/../labkb-full-$TAG.zip" >> "$GITHUB_ENV"
+
+      - name: Create GitHub Release
+        run: |
+          TAG="${GITHUB_REF_NAME:-dev}"
+          gh release create "$TAG" \
+            --title "LabKB $TAG" \
+            --notes "## 部署包说明
+
+- **labkb-cloud-\$TAG.zip**：云函数部署包（阿里云 FC / 腾讯云 SCF 直接上传，含全部依赖）
+- **labkb-full-\$TAG.zip**：完整源码包（collector + docs + kb-template + README）
+
+详细部署步骤见 docs/部署SOP.md。" \
+            "${{ env.cloud_zip }}" "${{ env.full_zip }}"
+        env:
+          GH_TOKEN: ${{ github.token }}

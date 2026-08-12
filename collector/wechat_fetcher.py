@@ -37,7 +37,7 @@ UA = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 )
-# 完整浏览器指纹：机房 IP 风控时，请求头过于简陋更容易被拦
+# 完整浏览器指纹：模拟真实浏览器请求特征，降低被访问限制识别的概率
 HEADERS = {
     "User-Agent": UA,
     "Referer": "https://mp.weixin.qq.com/",
@@ -432,7 +432,7 @@ def main():
     soup = BeautifulSoup(html, "html.parser")
     title, author, pub = parse_meta(soup)
     if not title:
-        reason = "链接失效 / 需要登录 / 触发风控"
+        reason = "链接失效 / 需要登录 / 触发访问限制"
         for marker in (
             "该内容已被发布者删除",
             "此内容因违规无法查看",

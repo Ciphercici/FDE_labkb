@@ -3,7 +3,7 @@
 """
 打包云函数部署 zip（腾讯云 SCF / 阿里云 FC）
 
-产物: _tools/qq_collector/cloud_deploy/qq-collector-cloud.zip
+产物: collector/cloud_deploy/qq-collector-cloud.zip
 内容: cloud_queue_processor.py + wechat_fetcher.py + bs4 纯 Python 依赖
 
 用法: python build_cloud_package.py
@@ -15,7 +15,7 @@ import zipfile
 from pathlib import Path
 
 HERE = Path(__file__).parent
-FETCHER_SRC = HERE.parent / "wechat_fetcher" / "wechat_fetcher.py"
+FETCHER_SRC = HERE / "wechat_fetcher.py"
 OUT_DIR = HERE / "cloud_deploy"
 DEPS_DIR = OUT_DIR / "deps"
 ZIP_OUT = OUT_DIR / "qq-collector-cloud.zip"
