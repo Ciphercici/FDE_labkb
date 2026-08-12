@@ -33,7 +33,7 @@ jobs:
         run: |
           TAG="${GITHUB_REF_NAME:-dev}"
           mkdir -p dist/labkb-$TAG
-          cp -r collector docs kb-template README.md LICENSE dist/labkb-$TAG/
+          cp -r collector kb-template README.md LICENSE dist/labkb-$TAG/
           rm -rf dist/labkb-$TAG/collector/cloud_deploy   # 打包产物单出
           cd dist && zip -qr ../labkb-full-$TAG.zip labkb-$TAG
           echo "full_zip=$(pwd)/../labkb-full-$TAG.zip" >> "$GITHUB_ENV"
@@ -45,10 +45,10 @@ jobs:
             --title "LabKB $TAG" \
             --notes "## 部署包说明
 
-- **labkb-cloud-\$TAG.zip**：云函数部署包（阿里云 FC / 腾讯云 SCF 直接上传，含全部依赖）
-- **labkb-full-\$TAG.zip**：完整源码包（collector + docs + kb-template + README）
+- **labkb-cloud-${TAG}.zip**：云函数部署包（阿里云 FC / 腾讯云 SCF 直接上传，含全部依赖）
+- **labkb-full-${TAG}.zip**：完整源码包（collector + kb-template + README）
 
-详细部署步骤见 docs/部署SOP.md。" \
+详细部署步骤见仓库 README.md（自包含使用手册）。" \
             "${{ env.cloud_zip }}" "${{ env.full_zip }}"
         env:
           GH_TOKEN: ${{ github.token }}
